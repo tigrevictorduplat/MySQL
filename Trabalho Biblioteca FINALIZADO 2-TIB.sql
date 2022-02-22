@@ -7,12 +7,12 @@ CPF VARCHAR(45) PRIMARY KEY,
 Nome VARCHAR(20) NOT NULL,
 Sobrenome VARCHAR(20) NOT NULL,
 DataNasc DATE NOT NULL,
-CodEndereço INT NOT NULL,
+CodEndereco INT NOT NULL,
 ClubeDoLivro BIT NOT NULL,
 );
 
 CREATE TABLE Endereco(
-CodEndereço INT IDENTITY(1,1) PRIMARY KEY,
+CodEndereco INT IDENTITY(1,1) PRIMARY KEY,
 CPF VARCHAR(45) NOT NULL,
 Cidade VARCHAR(45) NOT NULL,
 TipoLocal VARCHAR(45) NOT NULL,
@@ -21,21 +21,21 @@ Numero INT NOT NULL,
 Complemento VARCHAR(45),
 );
 
-CREATE TABLE Locaçao(
+CREATE TABLE Locacao(
 CPF VARCHAR(45) PRIMARY KEY,
 ISBN VARCHAR(45) NOT NULL,
 DataLocacao DATE NOT NULL,
 DataDevolucao DATE NOT NULL,
 )
 
-CREATE TABLE Doaçao(
+CREATE TABLE Doacao(
 CPF VARCHAR(45) PRIMARY KEY,
 ISBN VARCHAR(45) NOT NULL,
-Título VARCHAR(45) NOT NULL,
+Tctulo VARCHAR(45) NOT NULL,
 )
 
 CREATE TABLE "Compra/Venda"(
-CodOperaçao INT IDENTITY(1,1) PRIMARY KEY,
+CodOperacao INT IDENTITY(1,1) PRIMARY KEY,
 CPF VARCHAR(45) NOT NULL,
 ISBN VARCHAR(45) NOT NULL,
 CodFuncionario VARCHAR(45) NOT NULL,
@@ -67,12 +67,12 @@ Nome VARCHAR(45) NOT NULL,
 )
 
 ALTER TABLE Leitores
-	ADD CONSTRAINT fk_Endereco FOREIGN KEY(CodEndereço) REFERENCES Endereço(CodEndereço);
+	ADD CONSTRAINT fk_Endereco FOREIGN KEY(CodEndereco) REFERENCES Endereco(CodEndereco);
 
-ALTER TABLE Locaçao
+ALTER TABLE Locacao
 	ADD CONSTRAINT fk_LeiLoc FOREIGN KEY (CPF) REFERENCES Leitores(CPF);
 
-ALTER TABLE Doaçao
+ALTER TABLE Doacao
 	ADD CONSTRAINT fk_DoaLoc FOREIGN KEY (CPF) REFERENCES Leitores(CPF);
 
 ALTER TABLE [Compra/Venda]
@@ -89,13 +89,13 @@ ALTER TABLE Livros
 
 
 
-INSERT INTO Endereço (CPF, Cidade, TipoLocal, Logradouro, Numero, Complemento)
+INSERT INTO Endereco (CPF, Cidade, TipoLocal, Logradouro, Numero, Complemento)
 VALUES
-('09984751570', 'Camaçari', 'Rua', 'Ibicaraí', 37, 302),
+('09984751570', 'Camacari', 'Rua', 'Ibicarac', 37, 302),
 ('02145479570', 'Salvador', 'Avenida', 'Paralela', 28, 301),
-('01145482040', 'Camaçari', 'Rua', 'Das Flores', 20, 0);
+('01145482040', 'Camacari', 'Rua', 'Das Flores', 20, 0);
 
-SELECT*FROM Endereço
+SELECT*FROM Endereco
 SELECT*FROM Funcionarios
 
 INSERT INTO Funcionarios (Nome,Sobrenome,DataIngresso)
@@ -106,18 +106,18 @@ VALUES
 
 INSERT INTO Autores (Nome)
 VALUES
-('José'),
+('Josc'),
 ('Carlos'),
-('Sebastião');
+('Sebastico');
 
 SELECT*FROM Autores
 SELECT*FROM LEITORES
 
 ALTER TABLE Leitores
-DROP COLUMN CodEndereço;
+DROP COLUMN CodEndereco;
 
 ALTER TABLE Leitores
-ADD CodEndereço INT IDENTITY(1,1) NOT NULL;
+ADD CodEndereco INT IDENTITY(1,1) NOT NULL;
 
 ALTER TABLE Livros
 DROP COLUMN CodAutor
@@ -140,19 +140,19 @@ VALUES
 ('954-0-245113-24-0', 'ZXSQW', 'Record', 10, '20100216');
 
 
-SELECT*FROM Doaçao
+SELECT*FROM Doacao
 SELECT*FROM Livros
 
 
-ALTER TABLE Doaçao
+ALTER TABLE Doacao
 ALTER COLUMN Quantidade INT NOT NULL;
 
-ALTER TABLE Locaçao
+ALTER TABLE Locacao
 ADD Quantidade INT NOT NULL;
 
-TRUNCATE TABLE Doaçao
+TRUNCATE TABLE Doacao
 
-INSERT INTO Doaçao (CPF, ISBN, Título, Quantidade)
+INSERT INTO Doacao (CPF, ISBN, Tctulo, Quantidade)
 VALUES
 ('09984751570', '964-1-243123-23-1', 'ABCDE', 1),
 ('02145479570', '961-2-246893-21-2', 'DFGED', 2),
@@ -164,7 +164,7 @@ VALUES
 ('10236541239', 'Amanda', 'Souza', '20000705', 1),
 ('10589314025', 'Roberto', 'Nunes', '19920125', 0);
 
-INSERT INTO Locaçao(CPF, ISBN, Quantidade, DataLocacao,DataDevolucao)
+INSERT INTO Locacao(CPF, ISBN, Quantidade, DataLocacao,DataDevolucao)
 VALUES
 ('10236541239' , '954-0-245113-24-0', 1 , '20210920', '20211110'),
 ('10589314025', '961-2-246893-21-2', 2, '20210820', '20211010');
@@ -195,24 +195,24 @@ TRUNCATE TABLE Leitores;
 TRUNCATE TABLE Autores;
 TRUNCATE TABLE Funcionarios;
 TRUNCATE TABLE [Compra/Venda];
-TRUNCATE TABLE Endereço;
-TRUNCATE TABLE Doaçao;
-TRUNCATE TABLE Locaçao;
+TRUNCATE TABLE Endereco;
+TRUNCATE TABLE Doacao;
+TRUNCATE TABLE Locacao;
 
 SELECT*FROM Autores
 SELECT*FROM Livros
 SELECT*FROM Funcionarios
 SELECT*FROM [Compra/Venda]
-SELECT*FROM Endereço
+SELECT*FROM Endereco
 SELECT*FROM Leitores
-SELECT*FROM Locaçao
-SELECT*FROM Doaçao
+SELECT*FROM Locacao
+SELECT*FROM Doacao
 
 INSERT INTO Autores (Nome)
 VALUES
 ('Napoleon Hill'),
 ('Jorge Amado'),
-('Guimarães Rosa'),
+('Guimarces Rosa'),
 ('Machado de Assis'),
 ('William Shakespeare'),
 ('Clarice Linspector'),
@@ -221,18 +221,18 @@ VALUES
 ('J.K Rowling'),
 ('George Orwell');
 
-INSERT INTO Endereço(CPF, Cidade, TipoLocal, Logradouro, Numero, Complemento)
+INSERT INTO Endereco(CPF, Cidade, TipoLocal, Logradouro, Numero, Complemento)
 VALUES
-('045.254.365-70', 'Camaçari', 'Rua', 'Das Araras', '37',''),
-('012.126.124-9', 'Camaçari', 'Avenida', 'Getulio Vargas', '16', ''),
-('291.889.915-11', 'Camaçari', 'Rua', 'Nova Esperança', '12', ''),
-('112.869.935-16', 'Camaçari', 'Rua', 'Boa Sorte', '11', ''),
-('113.869.935-23', 'Camaçari', 'Rua', 'Quatorze', '23', '32'),
-('354.869.935-43', 'Camaçari', 'Rua', 'São João', '54', '21'),
-('232.869.935-11', 'Camaçari', 'Rua', 'Sete De Setembro', '23', ''),
-('111.869.935-11', 'Camaçari', 'Rua', 'Quinze De Novembro', '61', '4'),
-('152.869.935-29', 'Camaçari', 'Rua', 'Tiradentes', '161', ''),
-('102.869.935-15', 'Camaçari', 'Rua', 'Rui Barbosa', '173', '');
+('045.254.365-70', 'Camacari', 'Rua', 'Das Araras', '37',''),
+('012.126.124-9', 'Camacari', 'Avenida', 'Getulio Vargas', '16', ''),
+('291.889.915-11', 'Camacari', 'Rua', 'Nova Esperanca', '12', ''),
+('112.869.935-16', 'Camacari', 'Rua', 'Boa Sorte', '11', ''),
+('113.869.935-23', 'Camacari', 'Rua', 'Quatorze', '23', '32'),
+('354.869.935-43', 'Camacari', 'Rua', 'Sco Joco', '54', '21'),
+('232.869.935-11', 'Camacari', 'Rua', 'Sete De Setembro', '23', ''),
+('111.869.935-11', 'Camacari', 'Rua', 'Quinze De Novembro', '61', '4'),
+('152.869.935-29', 'Camacari', 'Rua', 'Tiradentes', '161', ''),
+('102.869.935-15', 'Camacari', 'Rua', 'Rui Barbosa', '173', '');
 
 INSERT INTO Leitores (CPF, Nome, Sobrenome, DataNasc, ClubeDoLivro)
 VALUES
@@ -250,18 +250,18 @@ VALUES
 
 INSERT INTO Funcionarios(Nome, Sobrenome, DataIngresso)
 VALUES
-('Antonio ','José','20191021'),
+('Antonio ','Josc','20191021'),
 ('Carlos','Fonseca','20201001'),
 ('Maria','Das Dores','20211001'),
 ('Marina','Reis','20181023'),
 ('Carla','Silva','20180920');
 
-INSERT INTO Doaçao (CPF,ISBN,Título,Quantidade)
+INSERT INTO Doacao (CPF,ISBN,Tctulo,Quantidade)
 VALUES
 ('152.869.935-29', '978-3-16-148410-0','Abc',1),
 ('112.869.935-16', '924-3-15-125810-1','Cde', 2);
 
-INSERT INTO Locaçao (CPF, ISBN, DataLocacao, DataDevolucao, Quantidade)
+INSERT INTO Locacao (CPF, ISBN, DataLocacao, DataDevolucao, Quantidade)
 VALUES
 ('113.869.935-23', '921-3-14-125021-0', '20210910', '20210930', 2),
 ('354.869.935-43', '911-1-12-125011-1', '20210811', '20210829', 1),
