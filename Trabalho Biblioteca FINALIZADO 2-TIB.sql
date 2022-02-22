@@ -1,24 +1,24 @@
 CREATE DATABASE Livraria;
-
 USE Livraria;
 
-CREATE TABLE Leitores(
+CREATE TABLE Leitores
+(
 CPF VARCHAR(45) PRIMARY KEY,
 Nome VARCHAR(20) NOT NULL,
 Sobrenome VARCHAR(20) NOT NULL,
 DataNasc DATE NOT NULL,
-CodEndereco INT NOT NULL,
-ClubeDoLivro BIT NOT NULL,
+CodEndereco INT NULL,
+ClubeDoLivro BIT NOT NULL
 );
 
 CREATE TABLE Endereco(
-CodEndereco INT IDENTITY(1,1) PRIMARY KEY,
+CodEndereco INT AUTO_INCREMENT PRIMARY KEY,
 CPF VARCHAR(45) NOT NULL,
 Cidade VARCHAR(45) NOT NULL,
 TipoLocal VARCHAR(45) NOT NULL,
 Logradouro VARCHAR(45) NOT NULL,
 Numero INT NOT NULL,
-Complemento VARCHAR(45),
+Complemento VARCHAR(45)
 );
 
 CREATE TABLE Locacao(
@@ -26,31 +26,33 @@ CPF VARCHAR(45) PRIMARY KEY,
 ISBN VARCHAR(45) NOT NULL,
 DataLocacao DATE NOT NULL,
 DataDevolucao DATE NOT NULL,
-)
+Quantidade INT NOT NULL
+);
 
 CREATE TABLE Doacao(
 CPF VARCHAR(45) PRIMARY KEY,
 ISBN VARCHAR(45) NOT NULL,
-Tctulo VARCHAR(45) NOT NULL,
-)
+Titulo VARCHAR(45) NOT NULL,
+Quantidade INT NOT NULL
+);
 
-CREATE TABLE "Compra/Venda"(
-CodOperacao INT IDENTITY(1,1) PRIMARY KEY,
+
+CREATE TABLE CompraVenda (
+CodOperacao INT AUTO_INCREMENT PRIMARY KEY,
 CPF VARCHAR(45) NOT NULL,
 ISBN VARCHAR(45) NOT NULL,
-CodFuncionario VARCHAR(45) NOT NULL,
+CodFuncionario INT NOT NULL,
 DataVenda DATE NOT NULL,
-)
+Quantidade INT NOT NULL
+);
 
-ALTER TABLE [Compra/Venda]
-ALTER COLUMN CodFuncionario INT NOT NULL;
 
 CREATE TABLE Funcionarios(
-CodFuncionario INT IDENTITY(1,1) PRIMARY KEY,
+CodFuncionario INT AUTO_INCREMENT PRIMARY KEY,
 Nome VARCHAR(45) NOT NULL,
 Sobrenome VARCHAR(45) NOT NULL,
-DataIngresso DATE NOT NULL,
-)
+DataIngresso DATE NOT NULL
+);
 
 CREATE TABLE Livros(
 ISBN VARCHAR(45) PRIMARY KEY,
@@ -58,14 +60,15 @@ Titulo VARCHAR(45) NOT NULL,
 Editora VARCHAR(45) NOT NULL,
 CodAutor INT NOT NULL,
 Quantidade INT,
-DataInclusao DATE,
-)
+DataInclusao DATE
+);
 
 CREATE TABLE Autores(
-CodAutor INT IDENTITY(1,1) PRIMARY KEY,
-Nome VARCHAR(45) NOT NULL,
-)
+CodAutor INT AUTO_INCREMENT PRIMARY KEY,
+Nome VARCHAR(45) NOT NULL
+);
 
+-- Adicionando as FK keys
 ALTER TABLE Leitores
 	ADD CONSTRAINT fk_Endereco FOREIGN KEY(CodEndereco) REFERENCES Endereco(CodEndereco);
 
@@ -75,138 +78,19 @@ ALTER TABLE Locacao
 ALTER TABLE Doacao
 	ADD CONSTRAINT fk_DoaLoc FOREIGN KEY (CPF) REFERENCES Leitores(CPF);
 
-ALTER TABLE [Compra/Venda]
+ALTER TABLE CompraVenda
 	ADD CONSTRAINT fk_LeiCom FOREIGN KEY (CPF) REFERENCES Leitores(CPF);
 
-ALTER TABLE [Compra/Venda]
+ALTER TABLE CompraVenda
 	ADD CONSTRAINT fk_Funcionario FOREIGN KEY(CodFuncionario) REFERENCES Funcionarios(CodFuncionario);
 
-ALTER TABLE [Compra/Venda]
+ALTER TABLE CompraVenda
 	ADD CONSTRAINT fk_ISBN FOREIGN KEY(ISBN) REFERENCES Livros(ISBN);
 
 ALTER TABLE Livros
 	ADD CONSTRAINT fk_Autor FOREIGN KEY(CodAutor) REFERENCES Autores(CodAutor);
 
-
-
-INSERT INTO Endereco (CPF, Cidade, TipoLocal, Logradouro, Numero, Complemento)
-VALUES
-('09984751570', 'Camacari', 'Rua', 'Ibicarac', 37, 302),
-('02145479570', 'Salvador', 'Avenida', 'Paralela', 28, 301),
-('01145482040', 'Camacari', 'Rua', 'Das Flores', 20, 0);
-
-SELECT*FROM Endereco
-SELECT*FROM Funcionarios
-
-INSERT INTO Funcionarios (Nome,Sobrenome,DataIngresso)
-VALUES
-('Rian', 'Novais', '20151010'),
-('Claudio', 'Teixeira', '20190910'),
-('Ana', 'Carolina', '20201104');
-
-INSERT INTO Autores (Nome)
-VALUES
-('Josc'),
-('Carlos'),
-('Sebastico');
-
-SELECT*FROM Autores
-SELECT*FROM LEITORES
-
-ALTER TABLE Leitores
-DROP COLUMN CodEndereco;
-
-ALTER TABLE Leitores
-ADD CodEndereco INT IDENTITY(1,1) NOT NULL;
-
-ALTER TABLE Livros
-DROP COLUMN CodAutor
-
-ALTER TABLE Livros
-ADD CodAutor INT IDENTITY(1,1) NOT NULL;
-
-SELECT*FROM Livros
-
-INSERT INTO Leitores (CPF, Nome, Sobrenome, DataNasc, ClubeDoLivro)
-VALUES
-('09984751570', 'Rian', 'Muniz', '20030717', 0),
-('02145479570', 'Ana', 'Teixeira', '20010416', 1),
-('01145482040', 'Alessandro', 'Marques', '19960108', 0);
-
-INSERT INTO Livros (ISBN, Titulo, Editora, Quantidade , DataInclusao)
-VALUES
-('964-1-243123-23-1', 'ABCDE', 'Globo', 22, '20210417'),
-('961-2-246893-21-2', 'DFGED', 'Globo', 2, '20210411'),
-('954-0-245113-24-0', 'ZXSQW', 'Record', 10, '20100216');
-
-
-SELECT*FROM Doacao
-SELECT*FROM Livros
-
-
-ALTER TABLE Doacao
-ALTER COLUMN Quantidade INT NOT NULL;
-
-ALTER TABLE Locacao
-ADD Quantidade INT NOT NULL;
-
-TRUNCATE TABLE Doacao
-
-INSERT INTO Doacao (CPF, ISBN, Tctulo, Quantidade)
-VALUES
-('09984751570', '964-1-243123-23-1', 'ABCDE', 1),
-('02145479570', '961-2-246893-21-2', 'DFGED', 2),
-('01145482040', '954-0-245113-24-0', 'ZXSQW', 3);
-
-INSERT INTO Leitores (CPF, Nome, Sobrenome, DataNasc, ClubeDoLivro)
-VALUES
-('01252631240', 'Clovis', 'Silveira', '20011002', 0),
-('10236541239', 'Amanda', 'Souza', '20000705', 1),
-('10589314025', 'Roberto', 'Nunes', '19920125', 0);
-
-INSERT INTO Locacao(CPF, ISBN, Quantidade, DataLocacao,DataDevolucao)
-VALUES
-('10236541239' , '954-0-245113-24-0', 1 , '20210920', '20211110'),
-('10589314025', '961-2-246893-21-2', 2, '20210820', '20211010');
-
-
-INSERT INTO [Compra/Venda] (CPF, CodFuncionario, ISBN, DataVenda)
-VALUES
-('10236541239',2, '954-0-245113-24-0', '20210905');
-
-SELECT*FROM [Compra/Venda]
-
-INSERT INTO [Compra/Venda] (CPF, CodFuncionario, ISBN, DataVenda)
-VALUES
-('10236541219',2, '954-0-245113-24-2', '20210915');
-
-TRUNCATE TABLE [Compra/Venda]
-
-
-ALTER TABLE [Compra/Venda]
-ADD Quantidade INT NOT NULL;
-
-INSERT INTO [Compra/Venda] (CPF, CodFuncionario, ISBN, DataVenda, Quantidade)
-VALUES
-('10236541219',2, '954-0-245113-24-2', '20210915',1);
-
-TRUNCATE TABLE Livros;
-TRUNCATE TABLE Leitores;
-TRUNCATE TABLE Autores;
-TRUNCATE TABLE Funcionarios;
-TRUNCATE TABLE [Compra/Venda];
-TRUNCATE TABLE Endereco;
-TRUNCATE TABLE Doacao;
-TRUNCATE TABLE Locacao;
-
-SELECT*FROM Autores
-SELECT*FROM Livros
-SELECT*FROM Funcionarios
-SELECT*FROM [Compra/Venda]
-SELECT*FROM Endereco
-SELECT*FROM Leitores
-SELECT*FROM Locacao
-SELECT*FROM Doacao
+-- Inserindo Valores
 
 INSERT INTO Autores (Nome)
 VALUES
@@ -236,10 +120,7 @@ VALUES
 
 INSERT INTO Leitores (CPF, Nome, Sobrenome, DataNasc, ClubeDoLivro)
 VALUES
-('045.254.365-70', 'Rian', 'Muniz', '20030110', 1);
-
-INSERT INTO Leitores (CPF, Nome, Sobrenome, DataNasc, ClubeDoLivro)
-VALUES
+('045.254.365-70', 'Rian', 'Muniz', '20030110', 1),
 ('012.126.124-9', 'Claudia', 'Teixeira', '20010120', 1),
 ('291.889.915-11', 'Roberto', 'Almeida', '19920430', 0),
 ('112.869.935-16', 'Juliana', 'Ribeiro', '20010410', 1),
@@ -256,7 +137,7 @@ VALUES
 ('Marina','Reis','20181023'),
 ('Carla','Silva','20180920');
 
-INSERT INTO Doacao (CPF,ISBN,Tctulo,Quantidade)
+INSERT INTO Doacao (CPF,ISBN,Titulo,Quantidade)
 VALUES
 ('152.869.935-29', '978-3-16-148410-0','Abc',1),
 ('112.869.935-16', '924-3-15-125810-1','Cde', 2);
@@ -267,22 +148,17 @@ VALUES
 ('354.869.935-43', '911-1-12-125011-1', '20210811', '20210829', 1),
 ('012.126.124-9', '921-3-14-125021-0', '20210910', '20210930', 4);
 
-INSERT INTO Livros (ISBN, Titulo,Editora, Quantidade,DataInclusao)
+INSERT INTO Livros (CodAutor,ISBN, Titulo,Editora, Quantidade,DataInclusao)
 VALUES
-('978-3-16-148410-0', 'Abc', 'Record', 2, '20210910'),
-('924-3-15-125810-1', 'Cde', 'Companhia Das Letras', 1,'20210810'),
-('914-2-12-123456-1', 'Zxw', 'Novos Territorios', 2, '20210711'),
-('215-2-12-142761-1', 'Qxw', 'Intriseca' , 11, '20201212'),
-('005-2-45-161131-2', 'Axw', 'Veneta', 24, '20210818');
+(1,'978-3-16-148410-0', 'Abc', 'Record', 2, '20210910'),
+(2,'924-3-15-125810-1', 'Cde', 'Companhia Das Letras', 1,'20210810'),
+(3,'914-2-12-123456-1', 'Zxw', 'Novos Territorios', 2, '20210711'),
+(4,'215-2-12-142761-1', 'Qxw', 'Intriseca' , 11, '20201212'),
+(5,'005-2-45-161131-2', 'Axw', 'Veneta', 24, '20210818');
 
-INSERT INTO [Compra/Venda] (CPF, ISBN, CodFuncionario, DataVenda, Quantidade)
+INSERT INTO CompraVenda (CPF, ISBN, CodFuncionario, DataVenda, Quantidade)
 VALUES
-('354.869.935-43', '245-5-15-252126-1',2,'20210113',3),
-('232.869.935-11', '415-5-12-348512-0', 1, '20201010', 2);
+('354.869.935-43', '924-3-15-125810-1',2,'20210113',3),
+('232.869.935-11', '005-2-45-161131-2', 1, '20201010', 2);
 
--- Qual Autor com mais livros?
-SELECT max(Count(CodAutor))
-FROM Livros group by CodAutor;
-
-
-TRUNCATE TABLE Autores;
+Show tables
