@@ -165,11 +165,12 @@ VALUES
 (6,7,'46748363214','Sherlock Holmes: A Volta de Sherlock Holmes',23.95,'Misterio'),
 (6,7,'46748369876','Sherlock Holmes: O Cão de Baskerville',21.50,'Misterio'),
 (6,7,'46748367653','Sherlock Holmes: O Signo dos Quatro',21.95,'Misterio'),
-(7,8,'25920373837','Ponto de Impacto',54.50,'Ficção-Cientifica'),
-(7,8,'25926378290','Código DaVinci',80.45,'Ficção-Cientifica'),
+(7,10,'25920373837','Ponto de Impacto',54.50,'Ficção-Cientifica'),
+(7,10,'25926378290','Código DaVinci',80.45,'Ficção-Cientifica'),
 (8,9,'36557552677','Jogos Vorazes',32.50,'Infanto-Juvenil'),
 (8,9,'36558789378','Jogos Vorazes: Em Chamas',32.50,'Infanto-Juvenil'),
-(8,9,'36557467866','Jogos Vorazes: A Esperança',42.90,'Infanto-Juvenil');
+(8,9,'36557467866','Jogos Vorazes: A Esperança',42.90,'Infanto-Juvenil'),
+(9,8,'78352388778','Assassinato no Expresso Oriente',30.50,'Misterio');
 
 INSERT INTO TB_FUNCIONARIOS(Nome,Sobrenome,DataIngresso)
 VALUES

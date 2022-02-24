@@ -1,4 +1,16 @@
-----------------------------------------
+/*Query:
+QUANTOS LIVROS TEMOS CADASTRADOS*/
+
+SELECT COUNT(DISTINCT IdLivro) AS "Quantidade Livros"
+FROM TB_LIVROS;
+
+/*Query
+QUANTOS CLIENTES TEMOS DE CADA CIDADE ? */
+
+SELECT Cidade, COUNT(Cidade)AS "Quantidade"
+FROM TB_ENDERECOCLIENTE
+GROUP BY TB_ENDERECOCLIENTE.Cidade
+
 -- Inner Join: Intersecção dos Funcionarios, Pedidos, Vendas e Clientes.
 --Para mostrar todos os Clientes que fizeram Pedidos e os Funcionarios que executaram essas vendas, mostrando o Identificador e Data de Cada Operação
 SELECT DISTINCT
@@ -23,8 +35,10 @@ F.idFuncionario =  V.idFuncionario AND
 V.idVenda = P.idVendas AND
 V.idCliente = C.idCliente
 ;
--- Outer Join - Exclusão da intersecção entre Leitores e Vendas
--- Mostra todos os Leitores que ainda não compraram nenhum livro  
+/*
+Outer Join - Exclusão da intersecção entre Leitores e Vendas
+Mostra todos os Leitores que ainda não compraram nenhum livro
+*/ 
 SELECT
 -- V.idVenda as `Identificador da Venda`,
 C.idCliente as `Identificador do Cliente`,
@@ -37,7 +51,10 @@ C.idCliente = V.idCliente
 WHERE V.idVenda IS NULL
 ;
 
--- Outer Join (Extra) - Exclusão da intersecção entre Livros e Pedidos
+/*
+Outer Join (Extra) - Exclusão da intersecção entre Livros e Pedidos
+Livros que não foram comprados
+*/
 SELECT
 -- P.idPedido as `Pedidos Feitos`,
 L.idLivro as `Identificador do Livro`,
@@ -50,11 +67,111 @@ ON
 P.idLivro = L.idLivro
 WHERE P.idPedido IS NULL
 ;
+/*
+Cross Join - Relacionando Categoria Mistério com Todos Livros e Autores de Mistério
+*/
+SELECT DISTINCT L.Categoria, A.Nome as `Autor(a)` FROM
+TB_LIVROS as L 
+CROSS JOIN
+TB_AUTORES as A
+ON
+L.idAutor = A.idAutor
+WHERE L.Categoria = "Misterio"
+;
+/*
+COUNT - Quantos Clientes são de fora de Camaçari e quais suas cidades, ordenados por ordem Alfabética
+*/
+SELECT
+EC.Cidade,
+COUNT(EC.Cidade) as `Número de Clientes`
+FROM
+TB_CLIENTES as C,
+TB_ENDERECOCLIENTE as EC
+WHERE
+EC.idEndereco = C.idEndereco AND
+EC.Cidade != "Camacari"
+GROUP BY EC.Cidade
+ORDER BY Cidade
+;
+/*
+COUNT EXTRA -  Quantidade de Livros por Autor
+*/
+SELECT
+CONCAT(A.Nome,"", A.Sobrenome) as `Autor(a)`,
+COUNT(L.idLivro) as `Quantidade de Livros`
+FROM
+TB_AUTORES as A, 
+TB_LIVROS as L
+WHERE L.idAutor = A.idAutor
+GROUP BY `Autor(a)`
+ORDER BY `Quantidade de Livros` desc
+;
+/*
+AVG - Média do Preço dos Livros por Categoria
+*/
+SELECT
+L.Categoria,
+ROUND(AVG(L.Preco),2) as `Média de Preço`
+FROM TB_LIVROS as L
+GROUP BY L.Categoria
+ORDER BY `Média de Preço`
+;
+/*
+MAX Autor Com Mais Livros
+*/
+SELECT MAX() FROM TB_LIVROS as L 
 
-/* View 5 -  Autores Mais Lidos
+
+SELECT
+CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`
+--MAX(L.idLivro) as `Quantidade de Livros`
+FROM
+TB_LIVROS as L
+LEFT JOIN 
+TB_AUTORES as A 
+ON L.idAutor = A.idAutor 
+
+
+/*
+View 1 - Leitores de Camaçari
+ Retorna os Leitores que moram em Camaçari.
+ MAS para ser considerado "Leitor" é necessário ter comprado ao menos 1 livro!
+ Então essa view retorna Clientes, que Compraram algum livro e moram em Camaçari
+*/
+CREATE VIEW vw_LeitoresCamacari
+AS
+SELECT DISTINCT
+-- V.idVenda as `Identificador da Venda`,
+C.idCliente as `Identificador do Cliente`,
+C.Nome,C.Sobrenome,C.CPF,
+EC.Cidade
+FROM
+TB_ENDERECOCLIENTE as EC,
+TB_CLIENTES as C LEFT JOIN
+TB_VENDAS as V
+ON
+C.idCliente = V.idCliente
+WHERE V.idVenda IS NOT NULL AND
+EC.idEndereco = C.idEndereco AND
+EC.Cidade = "Camacari"
+;
+/*
+View 2 - Funcionários por Ordem de Ingresso e Alfabética
+*/
+CREATE VIEW vw_FuncionariosPorIngresso
+AS
+SELECT
+F.idFuncionario as `Identificador do Funcionário`,
+F.Nome, F.Sobrenome,
+F.DataIngresso as `Data de Ingresso` FROM
+TB_FUNCIONARIOS as F
+ORDER BY `Data de Ingresso`, Nome
+;
+
+/*
+View 3 -  Autores Mais Lidos
 Mostra o Nome do Autor, Quantidade de livros "lidos" (vendidos) e ordenado de forma decrescente por Quantidade de livros lidos
 */
-
 CREATE VIEW vw_LeitoresdeAutores
 AS
 SELECT TB_AUTORES.nome as "Autor(a)", sum(TB_PEDIDOS.qtdePedido) AS "Leitores"
@@ -64,16 +181,28 @@ AND (TB_LIVROS.idAutor = TB_AUTORES.idAutor)
 group by TB_AUTORES.nome
 order by sum(TB_PEDIDOS.qtdePedido) desc;
 
-/*QUANTOS LIVROS TEMOS CADASTRADOS*/
+/*
+View 4 - Lista de Livros Mais Lidos por ordem de Quantidade de Livros Vendidos decrescente e de Preço ascendente
 
-SELECT COUNT(DISTINCT IdLivro) AS "Quantidade Livros"
-FROM TB_LIVROS;
+*/
+CREATE VIEW vw_LivrosMaisLidos
+AS
+SELECT
+P.idPedido as `Identificador do Pedido`,
+L.Titulo, L.Preco as `Preço`, L.Categoria,
+P.qtdePedido as `Quantidade`
+FROM
+TB_LIVROS as L
+LEFT JOIN
+TB_PEDIDOS as P
+ON
+L.idLivro = P.idLivro
+WHERE
+P.idPedido IS NOT NULL
+ORDER BY `Quantidade` desc, `Preço` asc
+;
 
-/*QUANTOS CLIENTES TEMOS DE CADA CIDADE ? */
 
-SELECT Cidade, COUNT(Cidade)AS "Quantidade"
-FROM TB_ENDERECOCLIENTE
-GROUP BY TB_ENDERECOCLIENTE.Cidade
 
 /*  Procedimento I - Verifica as Vendas e Compara a uma Meta Estipulada, se a meta for batida o procedimento exibe uma mensagem de parabens
 */
@@ -109,12 +238,6 @@ ALTER TABLE TB_FUNCIONARIOS(StatusMeta) True;
 SHOW FULL TABLES
 WHERE table_type = 'VIEW';
 
-/*select TB_AUTORES.nome, sum(TB_PEDIDOS.qtdePedido) AS "Leitores"
-from TB_AUTORES, TB_LIVROS, TB_PEDIDOS
-where (TB_PEDIDOS.idLivro = TB_LIVROS.idLivro)
-and (TB_LIVROS.idAutor = TB_AUTORES.idAutor)
-group by TB_AUTORES.nome
-order by sum(TB_PEDIDOS.qtdePedido) desc
 
 -- ● Quantos livros do autor X foram vendidos?
 -- ● Quantos livros foram vendidos para um cliente morador de Camacari?
