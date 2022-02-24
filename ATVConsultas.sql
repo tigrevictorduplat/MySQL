@@ -97,7 +97,7 @@ ORDER BY Cidade
 COUNT EXTRA -  Quantidade de Livros por Autor
 */
 SELECT
-CONCAT(A.Nome,"", A.Sobrenome) as `Autor(a)`,
+CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
 COUNT(L.idLivro) as `Quantidade de Livros`
 FROM
 TB_AUTORES as A, 
@@ -117,19 +117,36 @@ GROUP BY L.Categoria
 ORDER BY `Média de Preço`
 ;
 /*
-MAX Autor Com Mais Livros
+Dificuldade
+MAX Autor Com Mais Livros - 
+--MAX(L.idLivro) as `Quantidade de Livros`
+SELECT
+CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
+MAX(L.idLivro) as `Quantidade de Livros`
+FROM
+TB_LIVROS as L,
+TB_AUTORES as A
+WHERE
+L.idAutor = A.idAutor
+GROUP BY A.idAutor
 */
-SELECT MAX() FROM TB_LIVROS as L 
 
+/*
+Dificuldade
+MIN - Preço por Venda
 
 SELECT
-CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`
---MAX(L.idLivro) as `Quantidade de Livros`
+L.Titulo, MIN(L.Preco) as `Menor Preço`
 FROM
-TB_LIVROS as L
-LEFT JOIN 
-TB_AUTORES as A 
-ON L.idAutor = A.idAutor 
+TB_LIVROS as L,
+TB_VENDAS as V,
+TB_PEDIDOS as P
+WHERE
+V.idVenda = P.idVendas AND
+L.idLivro = P.idLivro
+GROUP BY Titulo
+ORDER BY `Menor Preço` asc
+*/
 
 
 /*
@@ -201,10 +218,22 @@ WHERE
 P.idPedido IS NOT NULL
 ORDER BY `Quantidade` desc, `Preço` asc
 ;
+/*
+ Procedimento I - Chamar Todas as VIEWS
+*/
+DELIMITER ..
+CREATE PROCEDURE chamarTodasViews ()
+BEGIN
+    SELECT * FROM vw_FuncionariosPorIngresso;
+    SELECT * FROM vw_LeitoresCamacari;
+    SELECT * FROM vw_LeitoresdeAutores;
+    SELECT * FROM vw_LivrosMaisLidos;
 
+END ..
+DELIMITER ;
 
-
-/*  Procedimento I - Verifica as Vendas e Compara a uma Meta Estipulada, se a meta for batida o procedimento exibe uma mensagem de parabens
+/* 
+Procedimento II - Verifica as Vendas e Compara a uma Meta Estipulada, se a meta for batida o procedimento exibe uma mensagem de parabens
 */
 -- View - Quantidade de Vendas por Funcionário, ordenada decrescente 
 CREATE VIEW vw_PerformaceFuncionarios as
@@ -231,15 +260,26 @@ BEGIN
 END ..
 DELIMITER ;
 
--- Alter a Relational table to add a column
-
 ALTER TABLE TB_FUNCIONARIOS(StatusMeta) True;
 
 SHOW FULL TABLES
 WHERE table_type = 'VIEW';
 
+/*
+TRIGGER 1 - Preenche a Tabela Backup com os dados da Tabela Cliente, toda vez que um novo cliente é adcionado. Visando preservar os dados dos novos clientes
+*/
+--Create a new Table Trigger
+DELIMITER ..
+CREATE TRIGGER tr_ClienteBackUp
+  BEFORE INSERT ON TB_CLIENTES
+  BEGIN                                             INSERT INTO TB_CLIENTESBACKUP(Nome,Sobrenome,CPF,idEndereco)
+    VALUES
+    (NEW.Nome, NEW.Sobrenome, NEW.CPF, NEW.idEndereco);
+    SET  TB_CLIENTESBACKUP.idCliente = NEW.idCliente;
+  END ..
+DELIMITER;
 
--- ● Quantos livros do autor X foram vendidos?
--- ● Quantos livros foram vendidos para um cliente morador de Camacari?
--- ● Qual a maior venda?
--- ● Qual funcionário com mais vendas?
+/*
+TRIGGER 2 - Preenche a Tabela Histórico com os dados da Tabela Funcionarios, toda vez que um funcionário é desligado. Visando manter o registro de quem já trabalhou no estabelecimento
+*/
+
