@@ -1,9 +1,12 @@
+CREATE DATABASE Livraria;
+USE Livraria;
+
 CREATE TABLE TB_EDITORAS(
 idEditora INTEGER auto_increment NOT NULL,
 nome VARCHAR(30) NOT NULL,
 telefone CHAR(15) NOT NULL,
 CONSTRAINT PK_idEditora PRIMARY KEY (idEditora)
-)
+);
 
 CREATE TABLE TB_ENDERECOCLIENTE(
 idEndereco INTEGER auto_increment NOT NULL,
@@ -11,7 +14,7 @@ Estado VARCHAR(20) NOT NULL,
 Cidade VARCHAR(20) NOT NULL,
 Logradouro VARCHAR(60) NOT NULL,
 CONSTRAINT PK_idEndereco PRIMARY KEY(idEndereco)
-)
+);
 
 CREATE TABLE TB_CLIENTES(
 idCliente INTEGER auto_increment NOT NULL,
@@ -21,14 +24,14 @@ CPF BIGINT NOT NULL,
 idEndereco INTEGER NOT NULL,
 CONSTRAINT PK_idCliente PRIMARY KEY(idCliente),
 CONSTRAINT fk_idEndereco FOREIGN KEY (idEndereco) REFERENCES TB_ENDERECOCLIENTE(idEndereco)
-)
+);
 CREATE TABLE TB_CLIENTESBACKUP(
 idCliente INTEGER NOT NULL,
 Nome VARCHAR(30),
 Sobrenome VARCHAR(30),
 CPF BIGINT NOT NULL,
 idEndereco INTEGER NOT NULL
-)
+);
 
 
 CREATE TABLE TB_AUTORES(
@@ -36,7 +39,7 @@ idAutor INTEGER auto_increment NOT NULL,
 Nome VARCHAR(20) NOT NULL,
 Sobrenome VARCHAR(20) NOT NULL,
 CONSTRAINT PK_idAutor PRIMARY KEY (idAutor)
-)
+);
 
 CREATE TABLE TB_LIVROS(
 idLivro INTEGER auto_increment NOT NULL,
@@ -49,7 +52,7 @@ Categoria VARCHAR(100) NOT NULL,
 CONSTRAINT PK_idLivro PRIMARY KEY (idLivro),
 CONSTRAINT FK_idAutor FOREIGN KEY (idAutor) REFERENCES TB_AUTORES(idAutor),
 CONSTRAINT FK_idEditora FOREIGN KEY (idEditora) REFERENCES TB_EDITORAS(idEditora)
-)
+);
 
 CREATE TABLE TB_FUNCIONARIOS(
 idFuncionario INTEGER auto_increment NOT NULL,
@@ -58,13 +61,13 @@ Sobrenome VARCHAR(100) NOT NULL,
 DataIngresso DATE NOT NULL,
 StatusMeta BOOLEAN NOT NULL DEFAULT false,
 CONSTRAINT PK_idFuncionario PRIMARY KEY (idFuncionario)
-)
+);
 CREATE TABLE TB_FUNCIONARIOSHISTORICO(
 idFuncionario INTEGER NOT NULL,
 Nome VARCHAR(100) NOT NULL,
 Sobrenome VARCHAR(100) NOT NULL,
 DataIngresso DATE NOT NULL
-)
+);
 
 CREATE TABLE TB_VENDAS(
 idVenda INTEGER auto_increment NOT NULL,
@@ -78,7 +81,7 @@ CONSTRAINT PK_idVenda PRIMARY KEY (idVenda),
 CONSTRAINT FK_idCliente FOREIGN KEY (idCliente) REFERENCES TB_CLIENTES(idCliente),
 -- CONSTRAINT FK_idPedido FOREIGN KEY (idPedido) REFERENCES TB_PEDIDOS(idPedido),
 CONSTRAINT FK_idFuncionario FOREIGN KEY (idFuncionario) REFERENCES TB_FUNCIONARIOS(idFuncionario)
-)
+);
 
 CREATE TABLE TB_PEDIDOS(
 idPedido INTEGER auto_increment NOT NULL,
@@ -88,12 +91,12 @@ qtdePedido INT NOT NULL,
 CONSTRAINT PK_idPedido PRIMARY KEY (idPedido),
 CONSTRAINT FK_idLivro FOREIGN KEY (idLivro) REFERENCES TB_LIVROS(idLivro),
 CONSTRAINT FK_idVendas FOREIGN KEY (idVendas) REFERENCES TB_VENDAS(idVenda)
-)
+);
 CREATE TABLE TB_METAMENSAL(
 	ValorMeta DECIMAL(10,2) NOT NULL,
 	MesMeta VARCHAR(25) NOT NULL,
 	AnoMeta YEAR DEFAULT 2022
-)
+);
 INSERT INTO TB_METAMENSAL(ValorMeta, MesMeta, AnoMeta)
 VALUES
 (150.00, "Fervereiro",2020);
@@ -110,11 +113,6 @@ VALUES
 ('Sextante','(11)3344-1246'),
 ('Rocco','(31)98827-2316');
 
-SELECT*FROM TB_EDITORAS
-
-SELECT*FROM TB_ENDERECOCLIENTE
-
-
 INSERT INTO TB_ENDERECOCLIENTE(Estado, Cidade, Logradouro)
 VALUES
 ('SP','São Paulo','Rua Dos Frades, 37 Itaim Bibi'),
@@ -125,19 +123,15 @@ VALUES
 ('BA','Lauro de Freitas','Estrada do Coco, km 6,Portão'),
 ('BA','Camacari','Rua Ibicaraqui, 24, Gleba Z');
 
-SELECT*FROM TB_ENDERECOCLIENTE
-SELECT*FROM TB_CLIENTES
-
 INSERT INTO TB_CLIENTES(Nome,Sobrenome,CPF,idEndereco)
 VALUES
 ('Rian','Novais','05656246510',1),
 ('Cláudio','Peixoto','05645252620',2),
 ('Maria','Souza','62653226610',3),
 ('Luciana','Menezes','65652626570',4),
-('Carlos','Silveira','35489693568',5)
+('Carlos','Silveira','35489693568',5),
 ('Carla','Dinea','12298998562',6),
 ('João','Figueiredo','52652671262',7);
-
 
 INSERT INTO TB_AUTORES(Nome,Sobrenome)
 VALUES
@@ -150,9 +144,6 @@ VALUES
 ('Dan', 'Brown'),
 ('Suzane','Collins'),
 ('Agatha', 'Cristie');
-
-SELECT*FROM TB_AUTORES;
-SELECT*FROM TB_LIVROS;
 
 INSERT INTO TB_LIVROS(idAutor, idEditora, ISBN, Titulo, Preco, Categoria)
 VALUES
