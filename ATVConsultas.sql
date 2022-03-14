@@ -216,12 +216,12 @@ ON
 L.idLivro = P.idLivro
 WHERE
 P.idPedido IS NOT NULL
-ORDER BY `Quantidade` desc, `Preço` asc
-;
+ORDER BY `Quantidade` desc, `Preço` asc;
+
 /*
  Procedimento I - Chamar Todas as VIEWS
 */
-DELIMITER ..
+DELIMITER..
 CREATE PROCEDURE chamarTodasViews ()
 BEGIN
     SELECT * FROM vw_FuncionariosPorIngresso;
@@ -229,9 +229,8 @@ BEGIN
     SELECT * FROM vw_LeitoresdeAutores;
     SELECT * FROM vw_LivrosMaisLidos;
 
-END ..
-DELIMITER ;
-
+END..
+DELIMITER;
 /* 
 Procedimento II - Verifica as Vendas e Compara a uma Meta Estipulada, se a meta for batida o procedimento exibe uma mensagem de parabens
 */
@@ -268,18 +267,93 @@ WHERE table_type = 'VIEW';
 /*
 TRIGGER 1 - Preenche a Tabela Backup com os dados da Tabela Cliente, toda vez que um novo cliente é adcionado. Visando preservar os dados dos novos clientes
 */
---Create a new Table Trigger
 DELIMITER ..
 CREATE TRIGGER tr_ClienteBackUp
   BEFORE INSERT ON TB_CLIENTES
-  BEGIN                                             INSERT INTO TB_CLIENTESBACKUP(Nome,Sobrenome,CPF,idEndereco)
+  FOR EACH ROW 
+  BEGIN
+  INSERT INTO TB_CLIENTESBACKUP(idCliente,Nome,Sobrenome,CPF,idEndereco)
     VALUES
-    (NEW.Nome, NEW.Sobrenome, NEW.CPF, NEW.idEndereco);
-    SET  TB_CLIENTESBACKUP.idCliente = NEW.idCliente;
+    (NEW.idCliente, NEW.Nome, NEW.Sobrenome, NEW.CPF, NEW.idEndereco);
   END ..
 DELIMITER;
+
+
+-- Insert de Teste
+
+INSERT INTO TB_ENDERECOCLIENTE 
+(
+  Estado,
+  Cidade,
+  Logradouro
+)
+VALUES
+(
+  "BA",
+  "Arembepe",
+  "R. da Conceição, 14 - Volta Do Robalo"
+);
+
+INSERT INTO TB_CLIENTES 
+(
+  Nome,
+  Sobrenome,
+  CPF,
+  idEndereco
+)
+VALUES
+(
+  'Augusto',
+  'Freira',
+  78846725119,
+  8  
+);
+
+SELECT * FROM TB_CLIENTESBACKUP;
 
 /*
 TRIGGER 2 - Preenche a Tabela Histórico com os dados da Tabela Funcionarios, toda vez que um funcionário é desligado. Visando manter o registro de quem já trabalhou no estabelecimento
 */
 
+DELIMITER..
+CREATE TRIGGER tr_FuncionariosHistorico
+  BEFORE DELETE ON TB_FUNCIONARIOS
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO TB_FUNCIONARIOSHISTORICO 
+    (
+      idFuncionario,
+      Nome,
+      Sobrenome,
+      DataIngresso
+    )
+    VALUES
+    (
+      OLD.idFuncionario,
+      OLD.Nome,
+      OLD.Sobrenome,
+      OLD.DataIngresso
+    );
+  END..
+DELIMITER;
+
+-- Insert de Test, para então remover
+INSERT INTO TB_FUNCIONARIOS 
+(
+   Nome,
+   Sobrenome,
+   DataIngresso
+)
+VALUES
+(
+  'Testenaldo',
+  'Fulano da Silva',
+  '20210228'
+);
+
+-- Desligando Testenaldo
+
+DELETE FROM  TB_FUNCIONARIOS
+WHERE idFuncionario=26;
+
+SELECT * FROM TB_FUNCIONARIOSHISTORICO;
