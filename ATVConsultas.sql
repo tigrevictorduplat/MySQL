@@ -116,20 +116,33 @@ FROM TB_LIVROS as L
 GROUP BY L.Categoria
 ORDER BY `Média de Preço`
 ;
-/*
-Dificuldade
-MAX Autor Com Mais Livros - 
+
+--MAX Autor Com Mais Livros - 
 --MAX(L.idLivro) as `Quantidade de Livros`
-SELECT
+SELECT 
 CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
-MAX(L.idLivro) as `Quantidade de Livros`
+MAX(SUM(DISTINCT(L.Titulo))) as `Quantidade de Livros`
 FROM
 TB_LIVROS as L,
 TB_AUTORES as A
 WHERE
 L.idAutor = A.idAutor
 GROUP BY A.idAutor
-*/
+
+-- SELECT SEM O MAX
+SELECT
+CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
+(COUNT(L.Titulo) as `Quantidade de Livros`
+FROM
+TB_LIVROS as L,
+TB_AUTORES as A
+WHERE
+L.idAutor = A.idAutor
+GROUP BY A.idAutor
+
+
+
+
 
 /*
 Dificuldade
