@@ -218,6 +218,15 @@ WHERE
 P.idPedido IS NOT NULL
 ORDER BY `Quantidade` desc, `Preço` asc;
 
+-- View Extra- Quantidade de Vendas por Funcionário, ordenada decrescente 
+CREATE VIEW vw_PerformaceFuncionarios as
+SELECT F.Nome as "Nome do Funcionário", sum(P.QtdePedido) AS "Livros Vendidos"
+FROM TB_FUNCIONARIOS as F,TB_PEDIDOS as P, TB_VENDAS as V
+WHERE(V.idFuncionario = F.idFuncionario)
+AND (P.idVendas = V.idVenda)
+GROUP BY F.idFuncionario
+ORDER BY `Livros Vendidos` desc
+
 /*
  Procedimento I - Chamar Todas as VIEWS
 */
@@ -228,38 +237,30 @@ BEGIN
     SELECT * FROM vw_LeitoresCamacari;
     SELECT * FROM vw_LeitoresdeAutores;
     SELECT * FROM vw_LivrosMaisLidos;
+    SELECT * FROM vw_PerformaceFuncionarios;
 
 END..
 DELIMITER;
 /* 
-Procedimento II - Verifica as Vendas e Compara a uma Meta Estipulada, se a meta for batida o procedimento exibe uma mensagem de parabens
+Procedimento II - Determina quanto um funcionário deve receber de extra por suas vendas
 */
--- View - Quantidade de Vendas por Funcionário, ordenada decrescente 
-CREATE VIEW vw_PerformaceFuncionarios as
-SELECT F.Nome as "Nome do Funcionário", sum(P.QtdePedido) AS "Livros Vendidos"
-FROM TB_FUNCIONARIOS as F,TB_PEDIDOS as P, TB_VENDAS as V
-WHERE(V.idFuncionario = F.idFuncionario)
-AND (P.idVendas = V.idVenda)
-GROUP BY F.idFuncionario
-ORDER BY `Livros Vendidos` desc
-
---Create a new Procedure
-
--- Procedure definition
-
-CREATE PROCEDURE proced_ChecarMetaFuncionario(idFuncionario INT)
+--Comparar e retornar no Select o valor de acréscimo de salário
+DELIMITER..
+CREATE PROCEDURE mostrarBonusSalario()
 BEGIN
-	SELECT ValorMeta FROM TB_METAMENSAL;
-    SELECT `Livros Vendidos` FROM vw_PerformaceFuncionarios;  
-       IF ( `Livros Vendidos` >= ValorMeta) THEN
-           INSERT INTO TB_FUNCIONARIOS(StatusMeta)
-		   SELECT StatusMeta FROM TB_FUNCIONARIOS WHERE idFuncionario = 1
-       END IF;
+  DECLARE salarioBonus INT;
+  SET salarioBonus = 
 
+  SELECT F.Nome, F.Sobrenome IF(V.valorBrutoVenda > 99.90, ) as Bonus
+  FROM
+  TB_VENDAS as V,
+  TB_FUNCIONARIOS as F
+  WHERE
+  V.idFuncionario = F.idFuncionario;
 END ..
 DELIMITER ;
 
-ALTER TABLE TB_FUNCIONARIOS(StatusMeta) True;
+
 
 SHOW FULL TABLES
 WHERE table_type = 'VIEW';
