@@ -116,38 +116,33 @@ FROM TB_LIVROS as L
 GROUP BY L.Categoria
 ORDER BY `Média de Preço`
 ;
-
---MAX Autor Com Mais Livros - 
---MAX(L.idLivro) as `Quantidade de Livros`
-SELECT 
-CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
-MAX(SUM(DISTINCT(L.Titulo))) as `Quantidade de Livros`
+-- MAX COM 'LIMIT 1' Pedido com mais unidades
+SELECT L.Titulo, MAX(P.qtdePedido) as 'Número de Unidades'
 FROM
 TB_LIVROS as L,
-TB_AUTORES as A
+TB_PEDIDOS as P
 WHERE
-L.idAutor = A.idAutor
-GROUP BY A.idAutor
+L.idLivro = P.idLivro
+GROUP BY Titulo
+ORDER BY MAX(P.qtdePedido) desc
+LIMIT 1; -- Sem o Limit ele mostrará a lista completa dos Livros e Pedidos
 
--- SELECT SEM O MAX
+--MAX COM 'LIMIT 1' Autor Com Mais Livros  
 SELECT
 CONCAT(A.Nome," ", A.Sobrenome) as `Autor(a)`,
-(COUNT(L.Titulo) as `Quantidade de Livros`
+(COUNT(L.ISBN)) as `Quantidade de Livros`
 FROM
 TB_LIVROS as L,
 TB_AUTORES as A
 WHERE
 L.idAutor = A.idAutor
-GROUP BY A.idAutor
-
-
-
-
+GROUP BY `Autor(a)`
+ORDER BY `Quantidade de Livros` desc
+LIMIT 1 ;-- Sem o Limit ele mostrará a lista completa dos Autores e seus Livros
 
 /*
-Dificuldade
-MIN - Preço por Venda
-
+MIN COM 'LIMIT 1'- Livro Vendido por Menor Preço 
+*/
 SELECT
 L.Titulo, MIN(L.Preco) as `Menor Preço`
 FROM
@@ -159,8 +154,7 @@ V.idVenda = P.idVendas AND
 L.idLivro = P.idLivro
 GROUP BY Titulo
 ORDER BY `Menor Preço` asc
-*/
-
+LIMIT 1 -- Sem o Limit ele mostrará a lista completa dos Livros e seus preços
 
 /*
 View 1 - Leitores de Camaçari
