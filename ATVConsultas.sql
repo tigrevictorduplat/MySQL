@@ -248,26 +248,29 @@ BEGIN
 
 END..
 DELIMITER;
-/* 
-Procedimento II - Determina quanto um funcionário deve receber de extra por suas vendas
-*/
---Comparar e retornar no Select o valor de acréscimo de salário
-DELIMITER..
-CREATE PROCEDURE mostrarBonusSalario()
-BEGIN
-  DECLARE salarioBonus INT;
-  SET salarioBonus = 
 
-  SELECT F.Nome, F.Sobrenome IF(V.valorBrutoVenda > 99.90, ) as Bonus
+/* 
+Procedimento II - Consulta o Livro por ID
+*/
+
+DELIMITER ..
+CREATE PROCEDURE buscaLivro(idLivroConsulta INTEGER)
+BEGIN
+  SELECT
+  CONCAT(A.Nome," ", A.Sobrenome) as 'Autor(a)',
+  L.Categoria,L.Titulo, L.Preco
   FROM
-  TB_VENDAS as V,
-  TB_FUNCIONARIOS as F
+  TB_LIVROS as L,
+  TB_AUTORES as A
   WHERE
-  V.idFuncionario = F.idFuncionario;
+  L.idLivro = idLivroConsulta
+  AND
+  L.idAutor = A.idAutor;
+  
 END ..
 DELIMITER ;
 
-
+CALL buscaLivro(4);
 
 SHOW FULL TABLES
 WHERE table_type = 'VIEW';
